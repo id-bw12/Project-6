@@ -53,8 +53,6 @@ public class Control : MonoBehaviour {
 
 		playerObject.GetComponentInChildren<SkinnedMeshRenderer> ().material = Resources.Load (MATERIAL_COLOR)as Material;
 
-		playerObject.AddComponent<PlayerControl> ();
-
 		playerObject.AddComponent<RelativeMovement> ();
 		playerObject.AddComponent<AnimatePlayer> ();
 	}

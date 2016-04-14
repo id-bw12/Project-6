@@ -2,7 +2,7 @@
 using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
-public class RelativeMovement : MonoBehaviour {
+public class RelativeMovement : PlayerControl {
 	[SerializeField] private Transform target;
 
 	private float moveSpeed = 6.0f, vertSpeed, horInput, vertInput;
@@ -10,10 +10,6 @@ public class RelativeMovement : MonoBehaviour {
 	private ControllerColliderHit contact;
 	private Animator animate;
 	private PlayerControl control;
-
-    private enum charState { idle = 0, moving = 1, jumping = 2, crouch = 3 };
-
-    private charState state = charState.idle;
 
     // Use this for initialization
     void Start () {
@@ -31,7 +27,7 @@ public class RelativeMovement : MonoBehaviour {
 
 		control = gameObject.GetComponent<PlayerControl> ();
 
-		vertSpeed = control.MinFall;
+		vertSpeed = minFall;
 
 		animate = this.GetComponent<Animator> ();
 	}
@@ -42,14 +38,14 @@ public class RelativeMovement : MonoBehaviour {
 		Vector3 movement = Vector3.zero;
 
 		bool hitGround = false;
-        float horInput = Input.GetAxis("Horizontal"), vertInput= Input.GetAxis("Vertical");
 
         RaycastHit hit;
-        
+
+        horInput = Input.GetAxis("Horizontal");
+        vertInput = Input.GetAxis("Vertical");
+
         movement.x = horInput * moveSpeed;
         movement.z = vertInput * moveSpeed;
-
-        this.gameObject.GetComponent<AnimatePlayer>().SelectingAnimatation(movement, state);
 
 		movement = Vector3.ClampMagnitude (movement, moveSpeed);
 
@@ -60,9 +56,7 @@ public class RelativeMovement : MonoBehaviour {
 			float check = (charController.height + charController.radius) / 9.9f;
 
 			hitGround = hit.distance <= check;
-
-            if (horInput != 0)
-                Debug.Log(hitGround);
+           
 		}
 
 		CheckJumping (hitGround, ref movement);
@@ -70,7 +64,16 @@ public class RelativeMovement : MonoBehaviour {
 		movement.y = vertSpeed;
 
 		movement *= Time.deltaTime;
-		charController.Move (movement);
+
+        if (hitGround && (movement.x != 0 || movement.z != 0))
+            state = charState.moving;
+        else
+            if (hitGround && (movement.x != 0 && movement.z != 0))
+            state = charState.idle;
+
+        this.gameObject.GetComponent<AnimatePlayer>().SelectingAnimatation(horInput, vertInput);
+
+        charController.Move (movement);
 	}
 
 	void RotatePlayer(float horInput, float vertInput, ref Vector3 movement){
@@ -110,11 +113,10 @@ public class RelativeMovement : MonoBehaviour {
 		
 		if (isGrounded) {
             if (Input.GetButton("Jump")) {
-                vertSpeed = control.JumpSpeed;
+                vertSpeed = jumpSpeed;
                 state = charState.jumping;
             }
             else {
-
                 vertSpeed = -0.1f;
                 animate.SetBool("Jumping", false);
                 if (horInput != 0 || vertInput != 0)
@@ -124,13 +126,13 @@ public class RelativeMovement : MonoBehaviour {
 
             }
 		} else {
-			vertSpeed += control.Gravity * 5 * Time.deltaTime;
+			vertSpeed += gravity * 5 * Time.deltaTime;
 
-			if (vertSpeed < control.TerminalVelocity)
-				vertSpeed = control.TerminalVelocity;
-			
-			if (contact != null) 
-				animate.SetBool ("Jumping", true);
+			if (vertSpeed < terminalVelocity)
+				vertSpeed = terminalVelocity;
+
+            if (contact != null)
+                state = charState.jumping;
 
 			if (charController.isGrounded) {
 				if (Vector3.Dot (movement, contact.normal) < 0)
