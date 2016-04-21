@@ -3,71 +3,76 @@ using System.Collections;
 
 public class Control : MonoBehaviour {
 
-	private const string CHARACTER_MESH_PATH = "Graphics/Models/player",
-	ANIMATOR_CONTROLLER = "Graphics/Animator/player",
-	MATERIAL_COLOR = "Graphics/Materials/player";
+    private const string CHARACTER_MESH_PATH = "Graphics/Models/player",
+    ANIMATOR_CONTROLLER = "Graphics/Animator/player",
+    MATERIAL_COLOR = "Graphics/Materials/player";
 
-	// Use this for initialization
-	void Start () {
-	
-		SetupLevel ();
+    // Use this for initialization
+    void Start() {
 
-		MakePlayer ();
+        SetupLevel();
 
-		SetupCamera ();
+        MakePlayer();
+
+        SetupCamera();
 
         MakeItem();
 
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
 
-	}
+    void SetupLevel() {
 
-	void SetupLevel(){
+        var floorObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
-        var floorObject = GameObject.CreatePrimitive (PrimitiveType.Plane);
+        floorObject.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
 
-		floorObject.transform.position = new Vector3 (0.0f,0.0f,0.0f);
+        floorObject.transform.localScale = new Vector3(10, 1, 10);
 
-		floorObject.transform.localScale = new Vector3 (10, 1, 10);
-
-		floorObject.GetComponent<Renderer> ().material.color = Color.blue;
+        floorObject.GetComponent<Renderer>().material.color = Color.blue;
 
         MakeOuterWalls();
 
-		MakePlatforms ();
+        MakeInterWalls();
 
-	}
+        MakeDoor();
 
-	void MakePlayer(){
-	
-		GameObject playerObject = Instantiate(Resources.Load (CHARACTER_MESH_PATH) as GameObject);
+        MakePlatforms();
 
-		playerObject.name = "Player";
+    }
 
-		playerObject.transform.position = new Vector3 (0.0f, 1.1f, 0.0f);
+    void MakePlayer() {
 
-		playerObject.GetComponent<Animator> ().runtimeAnimatorController = Resources.Load (ANIMATOR_CONTROLLER)as RuntimeAnimatorController;
+        GameObject playerObject = Instantiate(Resources.Load(CHARACTER_MESH_PATH) as GameObject);
 
-		playerObject.GetComponent<Animator> ().applyRootMotion = false;
+        playerObject.name = "Player";
 
-		playerObject.GetComponentInChildren<SkinnedMeshRenderer> ().material = Resources.Load (MATERIAL_COLOR)as Material;
+        playerObject.transform.position = new Vector3(0.0f, 1.1f, 0.0f);
 
-		playerObject.AddComponent<RelativeMovement> ();
-		playerObject.AddComponent<AnimatePlayer> ();
-	}
+        playerObject.GetComponent<Animator>().runtimeAnimatorController = Resources.Load(ANIMATOR_CONTROLLER) as RuntimeAnimatorController;
 
-	void SetupCamera (){
+        playerObject.GetComponent<Animator>().applyRootMotion = false;
 
-		GameObject.Find ("Main Camera").AddComponent<OrbitCamera> ();
-	}
+        playerObject.GetComponentInChildren<SkinnedMeshRenderer>().material = Resources.Load(MATERIAL_COLOR) as Material;
+
+        playerObject.AddComponent<RelativeMovement>();
+        playerObject.AddComponent<AnimatePlayer>();
+    }
+
+    void SetupCamera() {
+
+        GameObject.Find("Main Camera").AddComponent<OrbitCamera>();
+    }
+
+    /****************************************************************
+	 * 	NAME: 			MakeOuterWall
+	 *  DESCRIPTION:	Makes the outer walls for the level so the player
+	 * 					doesn't fall off the world.
+	 * ***************************************************************/
 
     void MakeOuterWalls() {
         float scale = 100.0f;
 
-        float wallYPos = 7.5f;
+        float wallYPos = 5.5f;
 
         float wallYScale = wallYPos * 2;
 
@@ -75,8 +80,7 @@ public class Control : MonoBehaviour {
 
         float[,] wallXZScale = new float[,] { { 1.0f, scale }, { 1.0f, scale }, { scale, 1.0f }, { scale, 1.0f } };
 
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             var wallObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
             wallObject.transform.position = new Vector3(wallXZPos[i, 0], wallYPos, wallXZPos[i, 1]);
@@ -84,10 +88,59 @@ public class Control : MonoBehaviour {
 
             wallObject.GetComponent<Renderer>().material.color = Color.blue;
 
+            wallObject.name = "OuterWall " + i;
+
         }
     }
 
-	void MakePlatforms(){
+    /****************************************************************
+	 * 	NAME: 			MakeInterWalls
+	 *  DESCRIPTION:	Makes the inter wall for the door
+	 * 
+	 * ***************************************************************/
+
+    void MakeInterWalls() {
+
+        float wallXPos = 35.5f;
+
+        float wallYPos = 2.5f;
+
+        float wallYScale = wallYPos * 2;
+
+        float[] wallZPos = new float[] { 31.5f, -31.5f };
+
+        for (int i = 0; i < 2; i++) {
+            var wallObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+            wallObject.transform.position = new Vector3(wallXPos, wallYPos, wallZPos[i]);
+
+            wallObject.transform.localScale = new Vector3(2.0f, wallYScale, 35.0f);
+        }
+
+    }
+
+    /****************************************************************
+	 * 	NAME: 			MakeInterWalls
+	 *  DESCRIPTION:	Makes the door for use
+	 * 
+	 * ***************************************************************/
+    void MakeDoor(){
+
+        float doorXPos = 35.5f;
+
+        float doorYPos = 2.5f;
+
+        float doorYScale = doorYPos * 2;
+
+        var doorObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+        doorObject.transform.position = new Vector3( doorXPos, doorYPos, 0.0f);
+
+        doorObject.transform.localScale = new Vector3(1.0f, doorYScale, 30.0f);
+
+    }
+
+    void MakePlatforms(){
 		Vector3[] locations = new Vector3[]{new Vector3(5.0f,1.0f,5.0f),new Vector3(1.0f,1.5f,5.5f) };
 		Vector3[] size = new Vector3[]{new Vector3(4.0f,1.5f,4.0f), new Vector3(4.0f,3.0f,4.0f) };
 
