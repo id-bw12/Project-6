@@ -7,7 +7,7 @@ public class RelativeMovement : PlayerControl
     [SerializeField]
     private Transform target;
 
-    private float moveSpeed = 6.0f, vertSpeed, horInput, vertInput;
+    private float moveSpeed = 6.0f, vertSpeed, horInput, vertInput, pushForce = 3.0f;
     private CharacterController charController;
     private ControllerColliderHit contact;
     private Animator animate;
@@ -104,17 +104,20 @@ public class RelativeMovement : PlayerControl
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
+		var body = hit.collider.attachedRigidbody;
 
-        contact = hit;
+		contact = hit;
+
+		if (body != null && !body.isKinematic) {
+			body.velocity = hit.moveDirection * pushForce;
+		}
     }
 
     /****************************************************************
 	 * 	NAME: 			CheckingJumping
 	 *  DESCRIPTION:	Passes a boolean and references a Vector3
 	 * 					variable and checks if the player is grounded
-	 * 					and 
-	 * 					then passes it to the game logic and 
-	 * 					activate to the timer.
+	 * 					and
 	 * 
 	 * ***************************************************************/
 

@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{94EDD77D-F819-2135-68D3-5BD469ECE237}</ProjectGuid>
+    <ProjectGuid>{94E6CBEA-C4A2-E710-AF7B-D4CEEE511BC6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -46,11 +46,21 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Camera\OrbitCamera.cs" />
-     <Compile Include="Assets\ControlScripts\Control.cs" />
+     <Compile Include="Assets\ControlScripts\BasicUI.cs" />
+     <Compile Include="Assets\ControlScripts\DeviceOperator.cs" />
+     <Compile Include="Assets\ControlScripts\DoorOpenDevice.cs" />
+     <Compile Include="Assets\ControlScripts\IGameManager.cs" />
+     <Compile Include="Assets\ControlScripts\InventoryManager.cs" />
+     <Compile Include="Assets\ControlScripts\LevelSetup.cs" />
+     <Compile Include="Assets\ControlScripts\ManagerStatus.cs" />
+     <Compile Include="Assets\ControlScripts\Managers.cs" />
+     <Compile Include="Assets\DeviceScripts\ColorChangeDevice.cs" />
+     <Compile Include="Assets\DeviceScripts\DeviceTrigger.cs" />
+     <Compile Include="Assets\ItemScript\CollectibleItem.cs" />
+     <Compile Include="Assets\LightScript.cs" />
      <Compile Include="Assets\PlayerScripts\AnimatePlayer.cs" />
      <Compile Include="Assets\PlayerScripts\PlayerControl.cs" />
      <Compile Include="Assets\PlayerScripts\RelativeMovement.cs" />
-     <None Include="Assets\Resources\Standard Assets\Characters\ThirdPersonCharacter\ThirdPersonCharacterGuidelines.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
